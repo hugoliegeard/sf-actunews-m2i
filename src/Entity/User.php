@@ -53,6 +53,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->createdAt = $this->updatedAt = new \DateTimeImmutable();
     }
 
+    public static function create(string $firstName,
+                                  string $lastName,
+                                  string $email,
+                                  string $password,
+                                  array $roles = ['ROLE_USER']): self
+    {
+        $object = new self();
+        $object->setFirstName($firstName)
+                ->setLastName($lastName)
+                ->setEmail($email)
+                ->setPassword($password)
+                ->setRoles($roles);
+
+        return $object;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -68,6 +84,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->email = $email;
 
         return $this;
+    }
+
+    public function getFullName(): string
+    {
+        return $this->firstName . ' ' . $this->lastName;
     }
 
     /**
