@@ -39,8 +39,39 @@
                 </ul>
 
                 <div class="text-right">
-                    <a class="nav-item btn btn-outline-info" href="#">Connexion</a>
-                    <a class="nav-item btn btn-outline-warning mx-2" href="#">Inscription</a>
+
+                    {# {% dump app.user %} #}
+
+                    {% if app.user %}
+
+                        <span class="navbar-text mx-2">
+                        Bonjour <strong>{{ app.user.fullName }}</strong>
+                         <em>({{ app.user.roles|join(', ') }})</em>
+                        </span>
+
+                        {% if is_granted('ROLE_REPORTER') %}
+                            <a class="nav-item btn btn-outline-warning" href="{{ path('post_create') }}">
+                                Créer un article
+                            </a>
+                        {% endif %}
+
+                        <a class="nav-item btn btn-outline-info" href="{{ path('app_logout') }}">
+                            Déconnexion
+                        </a>
+
+                    {% else %}
+
+
+                        <a class="nav-item btn btn-outline-info" href="{{ path('app_login') }}">
+                            Connexion
+                        </a>
+
+                        <a class="nav-item btn btn-outline-warning mx-2" href="{{ path('user_register') }}">
+                            Inscription
+                        </a>
+
+                    {% endif %}
+
                 </div> <!-- ./text-right -->
 
             </div> <!-- ./collapse -->

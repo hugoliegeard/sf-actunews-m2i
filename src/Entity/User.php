@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\PasswordStrength;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -18,6 +20,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Assert\NotBlank(['message'=>'Le champ "{{ label }}" est obligatoire.'])]
+    #[Assert\Length(
+        max: 180,
+        maxMessage: 'Votre e-mail ne peux pas dépasser {{ limit }} caractères.',
+    )]
+    #[Assert\Email(
+        message: 'Vérifiez le format de votre e-mail.',
+    )]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -27,6 +37,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Assert\NotBlank(['message'=>'Le champ "{{ label }}" est obligatoire.'])]
+    #[Assert\PasswordStrength([
+        'minScore' => PasswordStrength::STRENGTH_STRONG,
+        'message' => 'Votre mot de passe est trop simple. Utilisez un mot de passe plus complexe pour votre sécurité.'
+    ])]
+    #[Assert\NotCompromisedPassword(['message'=>'Ce mot de passe est compromis.'])]
     private ?string $password = null;
 
     #[ORM\Column]
@@ -39,16 +55,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTimeImmutable $deletedAt = null;
 
     #[ORM\Column(length: 180)]
+    #[Assert\NotBlank(['message'=>'Le champ "{{ label }}" est obligatoire.'])]
+    #[Assert\Length(
+        max: 180,
+        maxMessage: 'Votre prénom ne peux pas dépasser {{ limit }} caractères.',
+    )]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 180)]
+    #[Assert\NotBlank(['message'=>'Le champ "{{ label }}" est obligatoire.'])]
+    #[Assert\Length(
+        max: 180,
+        maxMessage: 'Votre nom ne peux pas dépasser {{ limit }} caractères.',
+    )]
     private ?string $lastName = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Post::class)]
     private Collection $posts;
 
-    public function __construct()
+    public function __construct(array $roles)
     {
+        $this->roles = $roles;
         $this->posts = new ArrayCollection();
         $this->createdAt = $this->updatedAt = new \DateTimeImmutable();
     }
