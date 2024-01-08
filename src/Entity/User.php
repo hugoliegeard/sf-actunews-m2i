@@ -73,7 +73,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Post::class)]
     private Collection $posts;
 
-    public function __construct(array $roles)
+    public function __construct(array $roles = ['ROLE_USER'])
     {
         $this->roles = $roles;
         $this->posts = new ArrayCollection();
