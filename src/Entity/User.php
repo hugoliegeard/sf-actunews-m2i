@@ -2,16 +2,18 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
+use App\Repository\UserRepository;
+use ApiPlatform\Metadata\ApiResource;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints\PasswordStrength;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ApiResource]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -39,7 +41,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     #[Assert\NotBlank(['message'=>'Le champ "{{ label }}" est obligatoire.'])]
     #[Assert\PasswordStrength([
-        'minScore' => PasswordStrength::STRENGTH_STRONG,
+        'minScore' => PasswordStrength::STRENGTH_MEDIUM,
         'message' => 'Votre mot de passe est trop simple. Utilisez un mot de passe plus complexe pour votre sécurité.'
     ])]
     #[Assert\NotCompromisedPassword(['message'=>'Ce mot de passe est compromis.'])]
@@ -73,7 +75,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Post::class)]
     private Collection $posts;
 
-    public function __construct(array $roles = ['ROLE_USER'])
+    public function __construct(array $roles)
     {
         $this->roles = $roles;
         $this->posts = new ArrayCollection();
@@ -86,7 +88,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                                   string $password,
                                   array $roles = ['ROLE_USER']): self
     {
-        $object = new self();
+        $object = new self($roles);
         $object->setFirstName($firstName)
                 ->setLastName($lastName)
                 ->setEmail($email)
