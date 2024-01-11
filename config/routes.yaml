@@ -7,3 +7,7 @@ controllers:
 home:
     path: / # http://localhost:8000/
     controller: App\Controller\DefaultController::home
+
+auth:
+    path: /auth
+    methods: ['POST']
