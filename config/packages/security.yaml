@@ -59,6 +59,7 @@ security:
         # - { path: '^/api/posts', roles: ROLE_ADMIN, methods: [POST, PUT, PATCH, DELETE] }
 
     role_hierarchy:
+        ROLE_REPORTER: ROLE_USER
         ROLE_ADMIN: ROLE_REPORTER
 
 when@test:

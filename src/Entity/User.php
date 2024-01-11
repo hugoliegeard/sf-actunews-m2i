@@ -17,11 +17,13 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 //#[ApiResource]
-#[ApiResource(security: "is_granted('ROLE_USER')")]
+//#[ApiResource(security: "is_granted('ROLE_USER')")]
+#[ApiResource]
 #[Get]
 #[Patch(security: "is_granted('ROLE_ADMIN') or object == user")]
 #[GetCollection]
-#[\ApiPlatform\Metadata\Post(security: "is_granted('ROLE_ADMIN')")]
+//#[\ApiPlatform\Metadata\Post(security: "is_granted('ROLE_ADMIN')")]
+#[\ApiPlatform\Metadata\Post]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]

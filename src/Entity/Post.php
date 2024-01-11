@@ -2,15 +2,31 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Put;
 use Doctrine\DBAL\Types\Types;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\PostRepository;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 #[ApiResource(paginationItemsPerPage: 8)]
+#[Get]
+#[GetCollection]
+//#[Patch(security: "is_granted('ROLE_ADMIN') or object.user == user")]
+#[Put(security: "is_granted('ROLE_ADMIN') or object.user == user")]
+//#[Delete(security: "is_granted('ROLE_ADMIN') or object.user == user")]
+//#[\ApiPlatform\Metadata\Post(security: "is_granted('ROLE_REPORTER')")]
+
+#[\ApiPlatform\Metadata\Post(securityPostDenormalize: "is_granted('post_new', object)")]
+#[Patch(security: "is_granted('post_edit', object)")]
+#[Delete(security: "is_granted('post_delete', object)")]
+
 #[ApiFilter(SearchFilter::class, properties: ['id' => 'exact', 'title' => 'partial'])]class Post
 {
     #[ORM\Id]
@@ -41,7 +57,7 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 
     #[ORM\ManyToOne(inversedBy: 'posts')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    public ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'posts')]
     #[ORM\JoinColumn(nullable: false)]
