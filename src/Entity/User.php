@@ -4,12 +4,14 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
+use App\Controller\MeController;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints\PasswordStrength;
@@ -21,7 +23,12 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 #[ApiResource]
 #[Get]
 #[Patch(security: "is_granted('ROLE_ADMIN') or object == user")]
-#[GetCollection]
+//#[GetCollection]
+#[GetCollection(
+    uriTemplate: "/me",
+    controller: MeController::class,
+    security: "is_granted('ROLE_USER')",
+    name: 'me')] 
 //#[\ApiPlatform\Metadata\Post(security: "is_granted('ROLE_ADMIN')")]
 #[\ApiPlatform\Metadata\Post]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -72,6 +79,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         max: 180,
         maxMessage: 'Votre prénom ne peux pas dépasser {{ limit }} caractères.',
     )]
+    #[Groups(['read:post:collection','read:post:item'])]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 180)]
@@ -80,6 +88,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         max: 180,
         maxMessage: 'Votre nom ne peux pas dépasser {{ limit }} caractères.',
     )]
+    #[Groups(['read:post:collection','read:post:item'])]
     private ?string $lastName = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Post::class)]

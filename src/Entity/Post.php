@@ -13,11 +13,12 @@ use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 #[ApiResource(paginationItemsPerPage: 8)]
-#[Get]
-#[GetCollection]
+#[Get(normalizationContext: ['groups' => ['read:post:item']])]
+#[GetCollection(normalizationContext: ['groups' => ['read:post:collection']])]
 //#[Patch(security: "is_granted('ROLE_ADMIN') or object.user == user")]
 #[Put(security: "is_granted('ROLE_ADMIN') or object.user == user")]
 //#[Delete(security: "is_granted('ROLE_ADMIN') or object.user == user")]
@@ -32,21 +33,27 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['read:post:collection'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['read:post:collection','read:post:item'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['read:post:collection'])]
     private ?string $slug = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['read:post:collection','read:post:item'])]
     private ?string $content = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['read:post:collection','read:post:item'])]
     private ?string $image = null;
 
     #[ORM\Column]
+    #[Groups(['read:post:item'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
@@ -57,10 +64,12 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 
     #[ORM\ManyToOne(inversedBy: 'posts')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['read:post:collection','read:post:item'])]
     public ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'posts')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['read:post:collection','read:post:item'])]
     private ?Category $category = null;
 
     public function __construct()

@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller\Myapi;
 
+use App\Entity\Post;
 use App\Entity\User;
 use App\Repository\PostRepository;
 use App\Repository\UserRepository;
@@ -29,8 +30,13 @@ class MyapiController extends AbstractController
     public function posts(PostRepository $pr): JsonResponse
     {
         $posts = $pr->findAll();
-        return $this->json($posts, Response::HTTP_OK);
+        return $this->json($posts, Response::HTTP_OK, [], ["groups" => "read:post:collection"]);
     }
 
+    #[Route('/posts/{id}', name: 'post', methods: ['GET'])]
+    public function post(Post $post): JsonResponse
+    {
+        return $this->json($post, Response::HTTP_OK, [], ["groups" => "read:post:item"]);
+    }
 
 }
