@@ -29,8 +29,16 @@ class PostController extends AbstractController
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
+
             $manager->persist($post);
             $manager->flush();
+
+            return $this->redirectToRoute('default_post', [
+                'id' => $post->getId(),
+                'slug' => $post->getSlug(),
+                'categorySlug' => $post->getCategory()->getSlug()
+            ]);
+
         }
 
         return $this->render('post/create.html.twig', [

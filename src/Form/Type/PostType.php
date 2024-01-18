@@ -35,7 +35,7 @@ class PostType extends AbstractType
                 'class' => Category::class,
                 'choice_label' => 'name'
             ])
-            ->add('image', FileType::class)
+            ->add('image', TextType::class)
             ->add('content', TextareaType::class)
             ->add('submit', SubmitType::class, [
                 'label' => 'Publier mon article'

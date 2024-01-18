@@ -17,7 +17,6 @@
                             <small class="text-muted">
                                 {{ post.user.fullName }} | {{ post.category.name }}
                             </small>
-                            <p class="card-text">{{ post.content[:150] ~ '...' }}</p>
                             <a href="{{ path('default_post', {
                                 'categorySlug' : post.category.slug,
                                 'slug' : post.slug,
