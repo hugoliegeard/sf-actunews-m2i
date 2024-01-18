@@ -27,8 +27,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[\ApiPlatform\Metadata\Post(securityPostDenormalize: "is_granted('post_new', object)")]
 #[Patch(security: "is_granted('post_edit', object)")]
 #[Delete(security: "is_granted('post_delete', object)")]
-
-#[ApiFilter(SearchFilter::class, properties: ['id' => 'exact', 'title' => 'partial'])]class Post
+#[ApiFilter(SearchFilter::class, properties: [
+    'id' => 'exact',
+    'title' => 'partial',
+    'category' => 'exact'
+])]
+class Post
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -37,7 +41,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['read:post:collection','read:post:item'])]
+    #[Groups(['read:post:collection', 'read:post:item'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
@@ -45,11 +49,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
     private ?string $slug = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['read:post:collection','read:post:item'])]
+    #[Groups(['read:post:collection', 'read:post:item'])]
     private ?string $content = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['read:post:collection','read:post:item'])]
+    #[Groups(['read:post:collection', 'read:post:item'])]
     private ?string $image = null;
 
     #[ORM\Column]
@@ -64,12 +68,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
     #[ORM\ManyToOne(inversedBy: 'posts')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['read:post:collection','read:post:item'])]
+    #[Groups(['read:post:collection', 'read:post:item'])]
     public ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'posts')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['read:post:collection','read:post:item'])]
+    #[Groups(['read:post:collection', 'read:post:item'])]
     private ?Category $category = null;
 
     public function __construct()
